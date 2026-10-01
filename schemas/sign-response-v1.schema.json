@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "zixcel://aws/sign-response/v1",
+  "title": "Zixcel AWS SigV4 Sign Response v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["protocol", "request_id", "result"],
+  "properties": {
+    "protocol": { "const": "zixcel://aws/sign-response/v1" },
+    "request_id": { "$ref": "#/$defs/identifier" },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["headers", "receipt"],
+      "properties": {
+        "headers": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 3,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "value"],
+            "properties": {
+              "name": { "enum": ["authorization", "x-amz-date", "x-amz-security-token"] },
+              "value": { "type": "string", "minLength": 1, "maxLength": 32768 }
+            }
+          }
+        },
+        "receipt": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "request_digest",
+            "canonical_request_digest",
+            "audience",
+            "service",
+            "expires_at_epoch_seconds",
+            "result_digest",
+            "signed_header_names"
+          ],
+          "properties": {
+            "request_digest": { "$ref": "#/$defs/digest" },
+            "canonical_request_digest": { "$ref": "#/$defs/digest" },
+            "audience": { "$ref": "#/$defs/identifier" },
+            "service": { "$ref": "#/$defs/identifier" },
+            "expires_at_epoch_seconds": { "type": "integer", "minimum": 1 },
+            "result_digest": { "$ref": "#/$defs/digest" },
+            "signed_header_names": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 3,
+              "uniqueItems": true,
+              "items": { "type": "string", "minLength": 1, "maxLength": 128 }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    }
+  }
+}

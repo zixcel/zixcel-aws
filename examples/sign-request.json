@@ -1,0 +1,35 @@
+{
+  "protocol": "zixcel://aws/sign-request/v1",
+  "request_id": "request-example-001",
+  "request": {
+    "operation": "sign",
+    "input": {
+      "mode": "propose",
+      "credential_ref": "secret://aws/tenant-example/zixcel-aws/request-signing/aws/credential-example",
+      "scope": {
+        "subject": "subject-example",
+        "device": "device-example",
+        "workload": "spiffe://zixcel.local/workload/example",
+        "grant": "grant-example",
+        "audience": "aws",
+        "purpose": "request-signing"
+      },
+      "algorithm": "aws4-hmac-sha256",
+      "expires_at_epoch_seconds": 1440938460,
+      "parameters": {
+        "region": "us-east-1",
+        "service": "service",
+        "timestamp": "20150830T123600Z"
+      },
+      "request": {
+        "method": "GET",
+        "scheme": "https",
+        "host": "example.amazonaws.com",
+        "path": "/",
+        "query": [],
+        "headers": [],
+        "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  }
+}

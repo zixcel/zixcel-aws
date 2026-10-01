@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "zixcel://aws/sign-request/v1",
+  "title": "Zixcel AWS SigV4 Sign Request v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["protocol", "request_id", "request"],
+  "properties": {
+    "protocol": { "const": "zixcel://aws/sign-request/v1" },
+    "request_id": { "$ref": "#/$defs/identifier" },
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operation", "input"],
+      "properties": {
+        "operation": { "const": "sign" },
+        "input": { "$ref": "#/$defs/signInput" }
+      }
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,127}$"
+    },
+    "secretRef": {
+      "type": "string",
+      "pattern": "^secret://aws/[a-z0-9][a-z0-9._-]{0,63}/zixcel-aws/[a-z0-9][a-z0-9._-]{0,95}/[a-z0-9][a-z0-9._-]{0,95}/[a-z0-9][a-z0-9._-]{0,95}$",
+      "maxLength": 379
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subject", "device", "workload", "grant", "audience", "purpose"],
+      "properties": {
+        "subject": { "$ref": "#/$defs/identifier" },
+        "device": { "$ref": "#/$defs/identifier" },
+        "workload": { "type": "string", "pattern": "^spiffe://[^?#\\s]+$", "maxLength": 255 },
+        "grant": { "$ref": "#/$defs/identifier" },
+        "audience": { "$ref": "#/$defs/identifier" },
+        "purpose": { "$ref": "#/$defs/identifier" }
+      }
+    },
+    "host": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9.-]{0,251}[a-z0-9])?$",
+      "maxLength": 253
+    },
+    "query": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "value"],
+      "properties": {
+        "name": { "type": "string", "maxLength": 2048 },
+        "value": { "type": "string", "maxLength": 2048 }
+      }
+    },
+    "header": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "value"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "value": { "type": "string", "maxLength": 8192 }
+      }
+    },
+    "signInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "credential_ref",
+        "scope",
+        "algorithm",
+        "expires_at_epoch_seconds",
+        "parameters",
+        "request"
+      ],
+      "properties": {
+        "mode": { "enum": ["observe", "propose", "execute"] },
+        "credential_ref": { "$ref": "#/$defs/secretRef" },
+        "scope": { "$ref": "#/$defs/scope" },
+        "algorithm": { "const": "aws4-hmac-sha256" },
+        "expires_at_epoch_seconds": { "type": "integer", "minimum": 1 },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["region", "service", "timestamp"],
+          "properties": {
+            "region": { "$ref": "#/$defs/identifier" },
+            "service": { "$ref": "#/$defs/identifier" },
+            "timestamp": { "type": "string", "pattern": "^[0-9]{8}T[0-9]{6}Z$" }
+          }
+        },
+        "request": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["method", "scheme", "host", "path", "query", "headers", "payload_sha256"],
+          "properties": {
+            "method": { "type": "string", "pattern": "^[A-Z]{1,16}$" },
+            "scheme": { "const": "https" },
+            "host": { "$ref": "#/$defs/host" },
+            "path": { "type": "string", "pattern": "^/", "maxLength": 2048 },
+            "query": { "type": "array", "maxItems": 128, "items": { "$ref": "#/$defs/query" } },
+            "headers": { "type": "array", "maxItems": 64, "items": { "$ref": "#/$defs/header" } },
+            "payload_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+          }
+        }
+      }
+    }
+  }
+}

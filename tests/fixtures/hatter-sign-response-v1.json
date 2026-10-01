@@ -1,0 +1,33 @@
+{
+  "protocol": "zixcel://aws/sign-response/v1",
+  "request_id": "request-aws-001",
+  "result": {
+    "headers": [
+      {
+        "name": "authorization",
+        "value": "AWS4-HMAC-SHA256 Credential=AKIDEXAMPLE/20150830/us-east-1/service/aws4_request, SignedHeaders=host;x-amz-date;x-amz-security-token, Signature=926d8f9d46a4c1355ea4f3f5fa0e1e9004bb95dc12d1bd697511a997b83ca2a9"
+      },
+      {
+        "name": "x-amz-date",
+        "value": "20150830T123600Z"
+      },
+      {
+        "name": "x-amz-security-token",
+        "value": "fixture-session-token"
+      }
+    ],
+    "receipt": {
+      "request_digest": "sha256:c4abf604be113c25ba8ad0dd1bb6852c54afda31aa047ddf8f45cffbff21bf29",
+      "canonical_request_digest": "sha256:ae090a63ccb181be1edd665df3918db645e95838efec4b34d1ec77bdd7dc3c8f",
+      "audience": "aws",
+      "service": "service",
+      "expires_at_epoch_seconds": 1440938460,
+      "result_digest": "sha256:6528cd00874e7b656fc8a7e5c8c6b90f35ed48bbb86777df32cf1aba496ed4b5",
+      "signed_header_names": [
+        "authorization",
+        "x-amz-date",
+        "x-amz-security-token"
+      ]
+    }
+  }
+}
