@@ -7,7 +7,7 @@ rust-version = "1.97"
 description = "Credential-reference and SigV4 boundary for independent AWS integrations"
 license = "Apache-2.0"
 readme = "README.md"
-publish = ["zixcel-private"]
+publish = false
 [package.metadata.zixcel]
 boundary = "credential-use-and-signing"
 external_actions = false
@@ -15,7 +15,7 @@ network_client = false
 credential_values_in_wire = false
 
 [workspace]
-members = ["."]
+members = [".", "crates/*"]
 resolver = "3"
 
 [dependencies]
