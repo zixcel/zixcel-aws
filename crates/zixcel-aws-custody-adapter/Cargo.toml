@@ -11,8 +11,8 @@ repository = "https://github.com/zixcel/zixcel-aws"
 
 
 [dependencies]
-crowsi-credential-broker = { version = "=0.1.0", git = "https://github.com/vpremises/vpremises-credential.git", rev = "38ea5b7b66503c575215d1b93c4db9a5bc671572" }
-crowsi-credential-runtime = { version = "=0.1.0", git = "https://github.com/vpremises/vpremises-credential.git", rev = "38ea5b7b66503c575215d1b93c4db9a5bc671572" }
+crowsi-credential-broker = { version = "=0.1.1" }
+crowsi-credential-runtime = { version = "=0.1.0" }
 zixcel-aws = { version = "=0.1.0", path = "../.." }
 [dev-dependencies]
 crowsi-local-control-bridge = { version = "=0.1.0" }
