@@ -83,3 +83,5 @@ cargo test --locked --workspace --all-targets
 
 Use this boundary to compose an explicitly authorized AWS request. Unit vectors
 and fixture responses do not authorize cloud mutations or prove a live account.
+
+[OSS responsibility and source completion](docs/oss-source-contract.md) defines the supported package boundary and required acceptance. It does not declare unexecuted source, distribution or production checks complete.
