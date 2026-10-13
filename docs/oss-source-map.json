@@ -1,0 +1,151 @@
+{
+  "repository": "zixcel/zixcel-aws",
+  "purpose": "Prepare bounded AWS operations and signing requests without making secrets part of the public contract.",
+  "responsibility_boundary": "Own the named reusable integration/data mechanism. Product roles/UI and operational approvals stay with consumers; transport/custody reuse managed Crowsi components where capabilities fit. Planning-only APIs must remain clearly distinguished from implemented external operations.",
+  "packages": [
+    {
+      "manifest": "Cargo.toml",
+      "package": "zixcel-aws",
+      "ecosystem": "rust",
+      "description": "Credential-reference and SigV4 boundary for independent AWS integrations",
+      "interfaces": {
+        "lib": "src/lib.rs",
+        "features": {},
+        "bins": [],
+        "public_modules": [
+          "adapters"
+        ],
+        "public_reexports": [
+          "canonical::{CanonicalPreviewV1, canonical_preview}",
+          "credential::AwsCredentialMaterial",
+          "error::{AwsError, CredentialUseError, CredentialUseErrorCode}",
+          "execute::{SystemClock, TrustedClock, execute, execute_with_clock}",
+          "http_request::{HeaderV1, HttpRequestV1, QueryParameterV1, SigV4ParametersV1}",
+          "plan::{SigningPlanStepV1, SigningPlanV1, prepare}",
+          "port::{CredentialUsePort, CredentialUseRequest, sign_with_material}",
+          "request::{\n    CredentialScopeV1, OperationModeV1, SignInputV1, SignOperationV1, SignRequestV1,\n    parse_sign_request,\n}",
+          "response::{SensitiveHeaderValue, SignResponseV1, SigningReceiptV1}",
+          "response_parse::parse_sign_response"
+        ],
+        "implicit_bins": []
+      },
+      "declared_commands": {}
+    },
+    {
+      "manifest": "crates/zixcel-aws-custody-adapter/Cargo.toml",
+      "package": "zixcel-aws-custody-adapter",
+      "ecosystem": "rust",
+      "description": "Trusted in-process composition of Crowsi credential runtime and Zixcel AWS signing",
+      "interfaces": {
+        "lib": "crates/zixcel-aws-custody-adapter/src/lib.rs",
+        "features": {},
+        "bins": [],
+        "public_modules": [],
+        "public_reexports": [
+          "executor::ZixcelAwsCredentialExecutor"
+        ],
+        "implicit_bins": []
+      },
+      "declared_commands": {}
+    }
+  ],
+  "schema_definitions": [
+    "schemas/sign-request-v1.schema.json",
+    "schemas/sign-response-v1.schema.json"
+  ],
+  "test_sources": [
+    "src/http_request.rs",
+    "src/main.rs",
+    "src/scope_validation.rs",
+    "src/validation.rs",
+    "tests/canonical_vectors.rs",
+    "tests/cli_coordinator.rs",
+    "tests/crowsi_adapter.rs",
+    "tests/fixtures/hatter-sign-request-v1.json",
+    "tests/fixtures/hatter-sign-response-v1.json",
+    "tests/hatter_wire.rs",
+    "tests/response_validation.rs",
+    "tests/security.rs",
+    "tests/signing.rs",
+    "tests/support/mod.rs"
+  ],
+  "example_sources": [
+    "examples/bedrock_adapter.rs",
+    "examples/sign-request.json"
+  ],
+  "workflow_definitions": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "jobs": [
+        {
+          "job": "test",
+          "condition": null,
+          "runs_on": "ubuntu-24.04",
+          "steps": [
+            {
+              "name": null,
+              "run": null,
+              "uses": "actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+              "condition": null
+            },
+            {
+              "name": "Install declared Rust toolchain",
+              "run": "rustup toolchain install 1.97 --profile minimal --component rustfmt --component clippy",
+              "uses": null,
+              "condition": null
+            },
+            {
+              "name": "Check every maintained package",
+              "run": "cargo +1.97 fmt --all -- --check\ncargo +1.97 clippy --locked --workspace --all-targets --all-features -- -D warnings\ncargo +1.97 test --locked --workspace --all-targets --all-features\ncargo +1.97 test --locked --workspace --doc --all-features\ncargo +1.97 build --locked --workspace --bins\n",
+              "uses": null,
+              "condition": null
+            },
+            {
+              "name": "Audit exact dependency lock",
+              "run": "cargo install cargo-audit --version 0.22.2 --locked --no-default-features --root \"$RUNNER_TEMP/audit\"\n\"$RUNNER_TEMP/audit/bin/cargo-audit\" audit --deny warnings\n",
+              "uses": null,
+              "condition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": ".github/workflows/oss-policy.yml",
+      "jobs": [
+        {
+          "job": "repository-policy",
+          "condition": null,
+          "runs_on": "ubuntu-latest",
+          "steps": [
+            {
+              "name": null,
+              "run": null,
+              "uses": "actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+              "condition": null
+            },
+            {
+              "name": "Verify repository policy",
+              "run": "python3 .github/oss-policy-check.py",
+              "uses": null,
+              "condition": null
+            },
+            {
+              "name": "Verify policy regression tests",
+              "run": "cd .github && python3 -m unittest discover -s policy-tests",
+              "uses": null,
+              "condition": null
+            },
+            {
+              "name": "Check policy types",
+              "run": "python3 -m venv \"$RUNNER_TEMP/policy-types\"\n\"$RUNNER_TEMP/policy-types/bin/pip\" install -r .github/policy/requirements.txt\n\"$RUNNER_TEMP/policy-types/bin/mypy\" --strict .github/policy .github/oss-policy-check.py .github/policy-tests\n",
+              "uses": null,
+              "condition": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "evidence_policy": "Declarations and source paths are not proof of an executed acceptance. Exact CI head and result are recorded separately. No live accounts or production acceptance is inferred."
+}
