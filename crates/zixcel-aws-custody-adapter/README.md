@@ -27,7 +27,7 @@ cargo test --locked -p zixcel-aws-custody-adapter
 
 [Usage guide](docs/getting-started.md)
 
-[Schemas](schemas) · [Detailed documentation](docs) · [Implementation and public interfaces](src) · [Verification cases](tests) · [Contributing](CONTRIBUTING.md) · [Security reporting](SECURITY.md) · [License](LICENSE) · [Attribution notices](NOTICE)
+[Schemas](../../schemas) · [Detailed documentation](docs) · [Implementation and public interfaces](src) · [Verification cases](../../tests) · [Contributing](CONTRIBUTING.md) · [Security reporting](SECURITY.md) · [License](LICENSE) · [Attribution notices](NOTICE)
 
 ## Product responsibility
 
