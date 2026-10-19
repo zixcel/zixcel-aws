@@ -70,7 +70,13 @@ pub fn operation_input_digest(input: &[u8]) -> String {
     let mut hasher = Sha256::new();
     hasher.update(b"crowsi:credential-runtime-operation-input:v1\0");
     hasher.update(input);
-    format!("sha256:{:x}", hasher.finalize())
+    (hasher.finalize())
+        .iter()
+        .fold(String::from("sha256:"), |mut encoded, byte| {
+            use std::fmt::Write as _;
+            write!(encoded, "{byte:02x}").expect("writing to String cannot fail");
+            encoded
+        })
 }
 
 /// Crowsi resource identifier derived from a canonical credential reference.
@@ -79,7 +85,13 @@ pub fn credential_resource(canonical_id: &str) -> String {
     let mut hasher = Sha256::new();
     hasher.update(b"crowsi:credential-resource:v1\0");
     hasher.update(canonical_id.as_bytes());
-    format!("credential-{:x}", hasher.finalize())
+    (hasher.finalize())
+        .iter()
+        .fold(String::from("credential-"), |mut encoded, byte| {
+            use std::fmt::Write as _;
+            write!(encoded, "{byte:02x}").expect("writing to String cannot fail");
+            encoded
+        })
 }
 
 fn validate_operation(context: &CrowsiOperationContextV1<'_>) -> Result<(), AwsError> {
